@@ -8,7 +8,9 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - List at least two concrete bugs you noticed at the start  
   (for example: "the secret number kept changing" or "the hints were backwards").
 
----
+---In one case, it told me to go lower when I entered 1. In another case, it asked to go higher than 100.
+For this, I think the higher/lower logic is causing the issue.
+--- In other case, it showed as 8 attempts allowed but stopped me at 7. The attempt range might be counting wrong.
 
 ## 2. How did you use AI as a teammate?
 
@@ -16,7 +18,7 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
 - Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
 
----
+---I used Claude on this project where firstly, I tried to learn what the code is trying to accomplish, just in case if I got any misunderstanding.
 
 ## 3. Debugging and testing your fixes
 
