@@ -26,12 +26,35 @@ It wrote the code, ran away, and now the game is unplayable.
 ## 📝 Document Your Experience
 
 - [ ] Describe the game's purpose.
+  
+The game's purpose is to provide a simple number guessing experience where the player tries to guess a randomly selected secret number. The game gives feedback after each guess, helping the player narrow down the possibilities until they find the correct answer.
+
 - [ ] Detail which bugs you found.
+
+   - The secret number changed every time the "Submit" button was clicked, making it impossible to win.
+   - The hints ("Higher" or "Lower") were incorrect and did not accurately reflect the relationship between the guess and the secret number.
+
 - [ ] Explain what fixes you applied.
+
+   - Used Streamlit's `st.session_state` to store the secret number so it persists across interactions and doesn't reset on each guess.
+   - Corrected the logic for the hints to ensure they provide accurate feedback based on the player's guess compared to the secret number. ![Screenshot](image-1.png)
+============================= test session starts ==============================
+platform linux -- Python 3.12.1, pytest-9.0.2, pluggy-1.6.0 -- /home/codespace/.python/current/bin/python
+cachedir: .pytest_cache
+rootdir: /workspaces/mygameglitchinvestigator-starter
+plugins: anyio-4.11.0
+collected 4 items                                                              
+
+tests/test_game_logic.py::test_winning_guess PASSED                      [ 25%]
+tests/test_game_logic.py::test_guess_too_high PASSED                     [ 50%]
+tests/test_game_logic.py::test_guess_too_low PASSED                      [ 75%]
+tests/test_game_logic.py::test_get_range_for_difficulty PASSED           [100%]
+
+============================== 4 passed in 0.01s ===============================
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+- [ ] ![Fixed game](image-2.png)
 
 ## 🚀 Stretch Features
 
