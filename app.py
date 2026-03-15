@@ -1,5 +1,7 @@
 import random
 import streamlit as st
+# FIXME: Missing import — check_guess moved to logic_utils
+from logic_utils import check_guess
 
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
@@ -29,24 +31,6 @@ def parse_guess(raw: str):
     return True, value, None
 
 
-def check_guess(guess, secret):
-    if guess == secret:
-        return "Win", "🎉 Correct!"
-
-    try:
-        if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
-        else:
-            return "Too Low", "📉 Go LOWER!"
-    except TypeError:
-        g = str(guess)
-        if g == secret:
-            return "Win", "🎉 Correct!"
-        if g > secret:
-            return "Too High", "📈 Go HIGHER!"
-        return "Too Low", "📉 Go LOWER!"
-
-
 def update_score(current_score: int, outcome: str, attempt_number: int):
     if outcome == "Win":
         points = 100 - 10 * (attempt_number + 1)
@@ -54,9 +38,8 @@ def update_score(current_score: int, outcome: str, attempt_number: int):
             points = 10
         return current_score + points
 
+    # FIXME: Wrong score — Too High was rewarding +5 points on even attempts instead of deducting
     if outcome == "Too High":
-        if attempt_number % 2 == 0:
-            return current_score + 5
         return current_score - 5
 
     if outcome == "Too Low":
@@ -89,11 +72,18 @@ low, high = get_range_for_difficulty(difficulty)
 st.sidebar.caption(f"Range: {low} to {high}")
 st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 
-if "secret" not in st.session_state:
+# FIXME: State not reset — switching difficulty kept old secret, attempts, score, and history
+if "secret" not in st.session_state or st.session_state.get("difficulty") != difficulty:
     st.session_state.secret = random.randint(low, high)
+    st.session_state.difficulty = difficulty
+    st.session_state.attempts = 0
+    st.session_state.score = 0
+    st.session_state.history = []
+    st.session_state.status = "playing"
 
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 1
+    # FIXME: Off-by-one — attempts started at 1 causing one attempt to be lost before first guess
+    st.session_state.attempts = 0
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -106,8 +96,9 @@ if "history" not in st.session_state:
 
 st.subheader("Make a guess")
 
+# FIXME: Hardcoded range — message always showed 1–100 regardless of difficulty
 st.info(
-    f"Guess a number between 1 and 100. "
+    f"Guess a number between {low} and {high}. "
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
 )
 
@@ -116,7 +107,9 @@ with st.expander("Developer Debug Info"):
     st.write("Attempts:", st.session_state.attempts)
     st.write("Score:", st.session_state.score)
     st.write("Difficulty:", difficulty)
-    st.write("History:", st.session_state.history)
+    # FIXME: 0-based history — attempt numbers in history displayed starting from 0 instead of 1
+    for i, guess in enumerate(st.session_state.history, start=1):
+        st.write(f"Attempt {i}:", guess)
 
 raw_guess = st.text_input(
     "Enter your guess:",
@@ -133,7 +126,8 @@ with col3:
 
 if new_game:
     st.session_state.attempts = 0
-    st.session_state.secret = random.randint(1, 100)
+    # FIXME: Ignored difficulty range — New Game always picked from 1–100 instead of difficulty range
+    st.session_state.secret = random.randint(low, high)
     st.success("New game started.")
     st.rerun()
 
@@ -154,11 +148,8 @@ if submit:
         st.error(err)
     else:
         st.session_state.history.append(guess_int)
-
-        if st.session_state.attempts % 2 == 0:
-            secret = str(st.session_state.secret)
-        else:
-            secret = st.session_state.secret
+        # FIXME: Type mismatch — secret was cast to str on even attempts causing wrong string comparison
+        secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)
 
