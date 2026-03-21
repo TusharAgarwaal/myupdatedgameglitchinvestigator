@@ -55,7 +55,3 @@ tests/test_game_logic.py::test_get_range_for_difficulty PASSED           [100%]
 ## 📸 Demo
 
 - [ ] ![Fixed game](image-2.png)
-
-## 🚀 Stretch Features
-
-- [ ] [If you choose to complete Challenge 4, insert a screenshot of your Enhanced Game UI here]
